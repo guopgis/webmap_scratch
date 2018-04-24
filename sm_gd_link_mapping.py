@@ -70,13 +70,13 @@ def get_sm_links(sm_link_shpfn, gd_link_shpfn):
             r_angle = gd_feat.GetField('ANGLE')
             r_speed = gd_feat.GetField('SPEED')
             angle_diff = get_angle_diff(line_angle, gd_line_angle)
-            angle_speed[angle_diff] = r_speed
+            angle_speed[angle_diff] = int(r_speed)
         if len(angle_speed) > 0:
             v_keys = angle_speed.keys()
             v_keys.sort()
             result[r_id] = angle_speed[v_keys[0]]
         else:
-            print r_id
+            # print r_id
             result[r_id] = -99
     del sm_ds
     sorted_dict_keys(result)
@@ -107,7 +107,54 @@ def get_smlink_traffic(sm_link_shpfn, gd_link_shp_path):
             result[traffic_dt] = get_sm_links(sm_link_shpfn, gd_link_shpfn)
     return result
 
+
+def get_smlink_data(shp_fn, id_field):
+    ds = ogr.Open(shp_fn, 0)
+    shp_lyr = ds.GetLayer(0)
+    result = list()
+    k = 1
+    for p_feat in shp_lyr:
+        rid = p_feat.GetField(id_field)
+        result.append(rid)
+    del ds
+    return result
+
+
+def get_smtraffic_data(sm_link_data, sm_traffic_info, csv_fn):
+    date_keys = sm_traffic_info.keys()
+    date_keys.sort()
+    result = dict()
+    for sm_link in sm_link_data:
+        traffic_data = list()
+        for sm_date in date_keys:
+            speed = sm_traffic_info[sm_date].get(sm_link)
+            if speed:
+                traffic_data.append(speed)
+            else:
+                traffic_data.append('None')
+        result[sm_link] =  traffic_data
+
+    rec_header = ['ROADID']
+    for date_v in date_keys:
+        rec_header.append('T'+date_v[4:])
+    export_result(csv_fn, result, rec_header)
+
+
+def export_result(csv_fn, result_dict,header):
+    with open(csv_fn, 'wb') as out_csvfile:
+        writer = csv.writer(out_csvfile)
+        writer.writerow(header)
+        for link_id, link_rec in result_dict.items():
+            w_line = [link_id] + link_rec
+            writer.writerow(w_line)
+
+
 if __name__ == '__main__':
     sm_link_shpfn = r'D:\W03_Shimai\Gd_Traffic\cb_links\road_201704_ld.shp'
-    gd_link_shp_path = r'D:\W03_Shimai\Gd_Traffic\out_shpfn'
+    gd_link_shp_path = r'D:\W03_Shimai\Gd_Traffic\test'
+    sm_link_data = get_smlink_data(sm_link_shpfn, 'ROADID')
     sm_traffic_info = get_smlink_traffic(sm_link_shpfn, gd_link_shp_path)
+    csv_fn = r'D:\W03_Shimai\Gd_Traffic\smlink_traffic.csv'
+    sm_traffic_exp_data = get_smtraffic_data(sm_link_data, sm_traffic_info, csv_fn)
+
+
