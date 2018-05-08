@@ -19,12 +19,6 @@ from tqdm import tqdm
 
 exitFlag = 0
 base_bus = 'http://restapi.amap.com/v3/direction/transit/integrated'
-# keys = ['9ec1a8fab014f042207d86d5a8564547', 'b48fb2c50ec8dd65ceec772b298b9be6',
-#         'fe2dca58b0f87610651329803788e041', '9339dbb4995fd83058bed1a70b27bebf',
-#         '649171a2994c55cb53176955ab51f077', 'f64b8182041af74eb20b8cbde0b16e43',
-#         '9ad99c4e2389cab4f96d45ea2fb6b023', '7af54731bc3a6015e8ba14dc6db5da5b',
-#         '5a5b9ba9c97cf4646f366b41349ee48c', '861c0a79ee6a83786d67769115a26f48',
-#         '94e27ffc63260abde6d55c67f63fbf08']
 keys = list()
 out_put_data = [] # 最终输出结果
 TOTAL_COUNT = 0
