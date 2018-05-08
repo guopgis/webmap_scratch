@@ -14,7 +14,7 @@ import threading
 from tqdm import tqdm
 
 '''
-有输入文件中有OD点坐标，直接调用API即可。
+输入文件中有OD点坐标，直接调用API即可。
 '''
 
 exitFlag = 0
